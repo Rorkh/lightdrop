@@ -1,10 +1,3 @@
-local vklib = require("deps/vklib")
-local turbo = require("turbo")
-local escape = turbo.escape
-
-local ffi = require("ffi")
-ffi.cdef "unsigned int sleep(unsigned int seconds);"
-
 local lightdrop = {}
 
 function lightdrop:bot(token)

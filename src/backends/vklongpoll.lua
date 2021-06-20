@@ -1,5 +1,6 @@
-local vklib = require("deps/vklib")
+local vklib = require("vklib")
 local turbo = require("turbo")
+local json = require("cjson")
 
 local backend = {}
 
@@ -53,7 +54,7 @@ function backend:start(bot)
 
                 local body = res.body
                 if body then
-                        local data = turbo.escape.json_decode(body)
+                        local data = json.decode(body)
 
 			local failed = data.failed
 			if failed == 3 then
