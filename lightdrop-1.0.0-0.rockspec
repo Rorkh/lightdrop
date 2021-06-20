@@ -16,6 +16,7 @@ dependencies = {
 build = {
 	type = "builtin",
 	modules = {
-		"src/lightdrop.lua"
+		["lightdrop"] = "src/lightdrop.lua",
+		["lightdrop.backends.vk"] = "src/backends/vklongpoll.lua"
 	}
 }
