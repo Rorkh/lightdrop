@@ -6,7 +6,8 @@ function lightdrop:bot(token)
 		bot.token = token
 
 		bot.messageHandlers = {}
-		bot.rawHandlers = {}	
+		bot.rawHandlers = {}
+		bot.payloadHandlers = {}	
 
 	function bot:messageHandler(regex, func)
 		-- Maybe self.handlers[regex] = func pattern?
@@ -17,6 +18,13 @@ function lightdrop:bot(token)
 
 	function bot:rawHandler(etype, func)
 		table.insert(self.rawHandlers, {etype, func})
+	end
+	
+	-- TODO: move it in backend
+	-- VK features
+
+	function bot:payloadHandler(cmd, func)
+		table.insert(self.payloadHandlers, {cmd, func})
 	end
 	
 	setmetatable(bot, self)

@@ -2,7 +2,18 @@ local vklib = require("vklib")
 local turbo = require("turbo")
 local json = require("cjson")
 
-local backend = {}
+local backend = {keyboard = require("backends/vk/keyboard")}
+local message_context = {
+	reply = function(ctx, text)
+		ctx.session.messages.send{user_id=ctx.message.from_id, random_id=math.random(1,100000000), message=text}:cb()
+	end,
+	send_keyboard = function(ctx, struct, text)
+		ctx.session.messages.send{user_id=ctx.message.from_id, random_id=math.random(1,100000000), keyboard=struct, message=text}:cb()
+	end,
+	clear_keyboard = function(ctx, text)
+		ctx.session.messages.send{user_id=ctx.message.from_id, random_id=math.random(1,100000000), keyboard=backend.keyboard:new():get(), message=text}:cb()
+	end,	
+}
 
 function backend:start(bot)
 	local obj = {}
@@ -23,16 +34,31 @@ function backend:start(bot)
 
 		if etype == "message_new" then
 			local message = object.message
+			local payload = message.payload
+			
+			ctx.message = message
 
-			ctx.reply = function(text)
-				ctx.session.messages.send{user_id=message.from_id, random_id=math.random(1,100000000), message=text}:cb()
-			end			
+			if payload then
+				local data = json.decode(payload)
+				setmetatable(ctx, {__index=message_context})				
 
-			for _, handler in ipairs(bot.messageHandlers) do
-				ctx.args = {message.text:match(handler[1])}
+				for _, handler in ipairs(bot.payloadHandlers) do
+					-- TODO: Remove or
+					if data.command == handler[1] then
+						handler[2](ctx)
+					end	
+				end
 
-				if next(ctx.args) ~= nil then
-					handler[2](ctx)		
+				ctx.message = nil -- TODO: Find better solution
+			else		
+				setmetatable(ctx,{__index=message_context})
+
+				for _, handler in ipairs(bot.messageHandlers) do
+					ctx.args = {message.text:match(handler[1])}
+
+					if next(ctx.args) ~= nil then
+						handler[2](ctx)		
+					end
 				end
 			end
 		else
