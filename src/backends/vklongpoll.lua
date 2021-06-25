@@ -29,7 +29,9 @@ function backend:start(bot)
 			end			
 
 			for _, handler in ipairs(bot.messageHandlers) do
-				if message.text:match(handler[1]) then
+				ctx.args = {message.text:match(handler[1])}
+
+				if next(ctx.args) ~= nil then
 					handler[2](ctx)		
 				end
 			end

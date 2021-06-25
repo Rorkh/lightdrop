@@ -1,6 +1,28 @@
-# lightdrop
-## Fastest (I suppose) Lua bot (VK, Discord, Telegram) framework
-lightdrop is a bot framework built for LuaJIT 2 designed to easily 
-create highload bots for the largest social platforms
-## Supported platforms
-- Vkontakte (vk.com)
+<p align="center">
+	<img src="assets/icon.png" height="130">
+</p>
+
+---
+
+<p align="center"><i>lightdrop</i></p>
+
+---
+
+<p align="center">
+Fastest bot framework written on Lua<br>
+Now supports VK and theoretically Discord
+</p>
+
+---
+
+<p align="center"><i>Contributing</i></p>
+
+---
+
+<p align="center">There are no strict contributing rules, feel free to open issues or pull requests</p>
+
+---
+
+<p align="center"><i>Current version: gt67r4 (1.1)</i></p>
+
+---
