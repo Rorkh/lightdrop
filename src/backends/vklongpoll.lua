@@ -78,10 +78,13 @@ function backend:start(bot)
         end
 
 	obj.session.groups.getById{fields = "screen_name"}:cb(function(res)
+		if not res.response then return end
+
 		obj.group.id = res.response[1].id
 		obj.group.id_name = res.response[1].screen_name
 		obj.group.name = res.response[1].name
 	end)
+	if not obj.group.id then error("Wrong token ") end
 
 	print("Starting bot for " .. obj.group.name .. " (vk.com/" .. obj.group.id_name .. ")")
 	obj.session.groups.getLongPollServer{group_id = obj.group.id}:cb(function(resp)

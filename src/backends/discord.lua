@@ -88,6 +88,8 @@ function backend:start(bot)
 	obj.api:getCurrentUser(function(data)
 		user = data
 	end)
+	if not user.username then error("Wrong token") end
+
 	print(string.format("Authenticated as %s#%s", user.username, user.discriminator))
 
 	local gateway

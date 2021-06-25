@@ -10,7 +10,7 @@ bot:messageHandler("Say (.+)", function(ctx)
 	ctx.reply(ctx.args[1])
 end)
 
-bot:rawHandle("group_join", function(ctx)
+bot:rawHandler("group_join", function(ctx)
 	print(ctx.object.user_id .. " just joined the group.")
 end)
 
