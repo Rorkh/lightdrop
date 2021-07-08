@@ -1,5 +1,5 @@
 package = "lightdrop"
-version = "1.1.1-0"
+version = "1.1.1-1"
 source = {
 	url = "git+https://github.com/Rorkh/lightdrop"
 }
@@ -18,5 +18,7 @@ build = {
 	type = "builtin",
 	modules = {
 		["lightdrop"] = "src/lightdrop.lua",
+		["lightdrop.backends.vk"] = "src/backends/vk.lua",
+		["lightdrop.backends.vk.keyboard"] = "src/backends/vk/keyboard.lua"
 	}
 }

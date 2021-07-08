@@ -2,7 +2,7 @@ local vklib = require("vklib")
 local turbo = require("turbo")
 local json = require("cjson")
 
-local keyboard = require("backends.vk.keyboard")
+local keyboard = require("lightdrop.backends.vk.keyboard")
 local backend = class("vkbackend")
 
 local message_context = {

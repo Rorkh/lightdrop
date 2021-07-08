@@ -1,5 +1,5 @@
 local class = require("middleclass")
-local bot = require("backends.vk")
+local bot = require("lightdrop.backends.vk")
 
 local lightdrop = class("lightdrop")
 
