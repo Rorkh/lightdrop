@@ -9,8 +9,7 @@
 ---
 
 <p align="center">
-Fastest bot framework written on Lua<br>
-Now supports VK and theoretically Discord
+Fastest VK bot framework written on Lua<br>
 </p>
 
 ---

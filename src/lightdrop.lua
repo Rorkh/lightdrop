@@ -1,36 +1,30 @@
-local lightdrop = {}
+local class = require("middleclass")
+local bot = require("backends.vk")
 
-function lightdrop:bot(token)
-	local bot = {}
-		bot.group = {}
-		bot.token = token
+local lightdrop = class("lightdrop")
 
-		bot.messageHandlers = {}
-		bot.rawHandlers = {}
-		bot.payloadHandlers = {}	
+function lightdrop:initialize(token)
+        self.token = token
 
-	function bot:messageHandler(regex, func)
-		-- Maybe self.handlers[regex] = func pattern?
-		-- TODO: Make comparison
+        self.messageHandlers = {}
+        self.rawHandlers = {}
+        self.payloadHandlers = {}
+end
 
-		table.insert(self.messageHandlers, {regex, func})
-	end
+function lightdrop:messageHandler(regex, func)
+	table.insert(self.messageHandlers, {regex, func})
+end
 
-	function bot:rawHandler(etype, func)
-		table.insert(self.rawHandlers, {etype, func})
-	end
+function lightdrop:rawHandler(etype, func)
+	table.insert(self.rawHandlers, {etype, func})
+end
 	
-	-- TODO: move it in backend
-	-- VK features
+function lightdrop:payloadHandler(cmd, func)
+	table.insert(self.payloadHandlers, {cmd, func})
+end
 
-	function bot:payloadHandler(cmd, func)
-		table.insert(self.payloadHandlers, {cmd, func})
-	end
-	
-	setmetatable(bot, self)
-	self.__index = self
-
-	return bot
+function lightdrop:start()
+	bot:new(self):start()	
 end
 
 return lightdrop
