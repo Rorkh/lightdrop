@@ -11,8 +11,8 @@ function lightdrop:initialize(token)
         self.payloadHandlers = {}
 end
 
-function lightdrop:messageHandler(regex, func)
-	table.insert(self.messageHandlers, {regex, func})
+function lightdrop:messageHandler(pattern, func)
+	table.insert(self.messageHandlers, {pattern, func})
 end
 
 function lightdrop:rawHandler(etype, func)
@@ -21,6 +21,10 @@ end
 	
 function lightdrop:payloadHandler(cmd, func)
 	table.insert(self.payloadHandlers, {cmd, func})
+end
+
+function lightdrop:onStart(func)
+	table.insert(self.payloadHandlers, {"start", func})
 end
 
 function lightdrop:start()

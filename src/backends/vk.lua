@@ -18,72 +18,79 @@ local message_context = {
 }
 
 function backend:initialize(bot)
-        self.group = {}
+    self.group = {}
 	self.session = vklib:Session(bot.token)
-        self.bot = bot
+    self.bot = bot
 
-        self.keyboard = keyboard
-        self.url_template = "%s?act=a_check&key=%s&wait=25&ts=%s"
+    self.keyboard = keyboard
+    self.url_template = "%s?act=a_check&key=%s&wait=25&ts=%s"
 end
 
-function backend:_handle_event(event)
+function backend:handle_payload(object, ctx)
+     local data = json.decode(payload)
+
+    setmetatable(ctx, {
+        __index = message_context
+    })
+
+    for _, handler in ipairs(self.bot.payloadHandlers) do
+        if data.command == handler[1] then
+            handler[2](ctx)
+        end
+    end
+end
+
+function backend:handle_command(object, ctx)
+    setmetatable(ctx, {
+        __index = message_context
+    })
+
+    for _, handler in ipairs(self.bot.messageHandlers) do
+        ctx.args = {message.text:match(handler[1])}
+
+        if next(ctx.args) ~= nil then
+            handler[2](ctx)
+        end
+    end
+end
+
+function backend:handle_message(object, ctx)
+    local message = object.message
+    local payload = message.payload
+
+    ctx.message = message
+
+    if payload then self:handle_payload(object, ctx) else self:handle_command(object, ctx) end
+end
+
+function backend:handle_raw(object, ctx)
+    for _, handler in ipairs(self.bot.rawHandlers) do
+        if handler[1] == etype then
+            handler[2](ctx)
+        end
+    end
+end
+
+function backend:handle_event(event)
     local object = event.object
     local etype = event.type
 	
-    local ctx = {
-        session = self.session,
-        object = object
-    }
+    local ctx = {session = self.session, object = object}
 
-    if etype == "message_new" then
-        local message = object.message
-        local payload = message.payload
-        ctx.message = message
-
-        if payload then
-            local data = json.decode(payload)
-
-            setmetatable(ctx, {
-                __index = message_context
-            })
-
-            for _, handler in ipairs(self.bot.payloadHandlers) do
-                -- TODO: Remove or
-                if data.command == handler[1] then
-                    handler[2](ctx)
-                end
-            end
-
-            ctx.message = nil -- TODO: Find better solution
-        else
-            setmetatable(ctx, {
-                __index = message_context
-            })
-
-            for _, handler in ipairs(self.bot.messageHandlers) do
-                ctx.args = {message.text:match(handler[1])}
-
-                if next(ctx.args) ~= nil then
-                    handler[2](ctx)
-                end
-            end
-        end
+    if etype == "message_new" then 
+        self:handle_message(object, ctx) 
     else
-        for _, handler in ipairs(self.bot.rawHandlers) do
-            if handler[1] == etype then
-                handler[2](ctx)
-            end
-        end
+        self:handle_raw(object, ctx)
     end
 end
 
-function backend:_handle_events(response)
+function backend:handle_events(response)
     for _, event in ipairs(response.updates) do
-        self:_handle_event(event)
+        self:handle_event(event)
     end
 end
 
-function backend:_request_update()
+function backend:request_update()
     local req = string.format(self.url_template, self.server, self.key, self.ts)
 
     local res = coroutine.yield(turbo.async.HTTPClient({
@@ -113,8 +120,8 @@ function backend:_request_update()
             self.ts = data.ts
         end
 
-        self:_handle_events(data)
-        self:_request_update()
+        self:handle_events(data)
+        self:request_update()
     end
 end
 
@@ -145,7 +152,7 @@ function backend:start()
     local inst = turbo.ioloop.instance()
 
     inst:add_callback(function()
-        self:_request_update()
+        self:request_update()
         inst:close()
     end)
 
